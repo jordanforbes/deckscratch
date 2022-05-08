@@ -1,30 +1,10 @@
-langs={
-    "unit":{
-    "initialize":"*BREEN* initializing unit",
-    "activate":"BEEP BEEP Unit activated",
-    "vitals":"--getting vital signs--",
-    "hp":"BZZZT my HP is now:",
-    "damage":"BJORK I HAVE BEEN HIT FOR",
-    "hpNull":"SYSTEM FAILURE",
-    "die":"BOOOOM!"
-    },
-    "enemy":{
-    "initialize":"KRSH KRSH Enemy Unit Activated",
-    "activate":"SKRONK Enemy Spotted",
-    "vitals":">>>scanning Enemy>>>",
-    "hp":"Enemy Health is:",
-    "damage":"SHWING! I have dealt the enemy",
-    "hpNull":"YES! ENEMY SYSTEMS FAILING",
-    "die":"KRAAASH the enemy has fallen!"
-    }
-}
+from Langs import langs
 
-class Player():
+class Unit():
     def __init__(self,lang=langs["unit"],hp=100):
         self.baseHP= hp
         self.hp= 0
         self.lang=lang
-        self.speak("initialize")
         self.activate()
     
     def speak(self,key):
@@ -32,6 +12,7 @@ class Player():
         return self 
     
     def activate(self):
+        self.speak("initialize")
         self.speak("activate")
         self.setHP(self.baseHP)
         return self
@@ -45,6 +26,9 @@ class Player():
         print(f"--{self.getHP()} HP--")
         return self 
     
+    def aim(self):
+        return self  
+        
     def takeDamage(self,dmg):
         self.speak("damage")
         print(f'{dmg} damage!')
@@ -56,7 +40,9 @@ class Player():
             self.die()
     
     def dealDamage(self,target,dmg):
+        self.speak("attack")
         target.takeDamage(dmg)
+        return self
         
     def lifeCheck(self):
         self.speak("vitals")
@@ -68,22 +54,16 @@ class Player():
         
     def die(self):
         self.speak("die")
+        return self
         
-class Enemy(Player):
+class Enemy(Unit):
     def __init__(self,hp=30,lang=langs["enemy"]):
         print("ENEMY ROBOT APPROACHES")
-        self.baseHP=hp
-        self.lang=lang
-        self.hp=0
+        self.baseHP,self.lang= hp,lang
+        self.activate()
+        
+class Player(Unit):
+    def __init__(self,hp=50,lang=langs["player"]):
+        self.baseHP,self.lang= hp, lang
         self.activate()
  
-        
-
-u= Player()
-e= Enemy()
-u.dealDamage(e,5)
-e.dealDamage(u,4)
-u.takeDamage(500)
-e.takeDamage(400)
-
-# e.activate()
